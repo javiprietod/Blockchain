@@ -22,6 +22,9 @@ class Blockchain(object):
         self.anterior = self.primer_bloque()
         self.transacciones = None
 
+    def primer_bloque(self) -> Bloque:
+        return Bloque(0, [], time.time(), "0", 0)
+        
     def nuevo_bloque(self, hash_previo: str) -> Bloque:
         ''' Crea un nuevo bloque a partir de las transacciones que no estan
             confirmadas
@@ -87,4 +90,30 @@ class Blockchain(object):
             return False
 
     def integra_bloque(self, bloque_nuevo: Bloque, hash_prueba: str) ->bool:
-        pass
+        if bloque_nuevo.hash_previo != self.anterior.hash:
+            return False
+        if not self.prueba_valida(bloque_nuevo, hash_prueba):
+            return False
+        
+        
+        
+
+
+        """
+        Metodo para integran correctamente un bloque a la cadena de bloques.
+        Debe comprobar que la prueba de hash es valida y que el hash del bloque
+        ultimo de la cadena
+        coincida con el hash_previo del bloque que se va a integrar. Si pasa las
+        comprobaciones, actualiza el hash
+        del bloque a integrar, lo inserta en la cadena y hace un reset de las
+        transacciones no confirmadas (
+        vuelve
+        a dejar la lista de transacciones no confirmadas a una lista vacia)
+        :param bloque_nuevo: el nuevo bloque que se va a integrar
+        :param hash_prueba: la prueba de hash
+        7
+        :return: True si se ha podido ejecutar bien y False en caso contrario (si
+        no ha pasado alguna prueba)
+        """
+
+        # [Codificar el resto del metodo]
