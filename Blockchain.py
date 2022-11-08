@@ -20,7 +20,7 @@ class Blockchain(object):
     def __init__(self):
         self.dificultad = 4
         self.anterior = self.primer_bloque()
-        self.transacciones = None
+        self.transacciones = []
         self.cadena = []
 
     def primer_bloque(self) -> Bloque:
@@ -36,8 +36,8 @@ class Blockchain(object):
         bloque = Bloque(self.anterior.indice+1, [], time.time(), hash_previo, 0)
         self.anterior = bloque
         hash_previo = self.anterior.hash
-        bloque.hash_previo = hash_previo
-        hash_prueba = self.prueba_trabajo(bloque)
+        hash = self.prueba_trabajo(bloque)
+        bloque.hash = hash
         return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
@@ -95,8 +95,14 @@ class Blockchain(object):
     def integra_bloque(self, bloque_nuevo: Bloque, hash_prueba: str) ->bool:
         if bloque_nuevo.hash_previo != self.anterior.hash:
             return False
-        if not self.prueba_valida(bloque_nuevo, hash_prueba):
+        elif not self.prueba_valida(bloque_nuevo, hash_prueba):
             return False
+        else:
+            # actualizamos el hash?
+            self.cadena.append(bloque_nuevo)
+            # que hacemos con las transacciones?
+            self.transacciones = []
+
         
         
         
