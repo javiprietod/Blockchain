@@ -38,7 +38,7 @@ class Blockchain(object):
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
         transaccion = {"origen": origen, "destino": destino, "cantidad": cantidad, "tiempo": time.time()}
         self.transacciones.append(transaccion)
-        pass
+        return self.anterior.indice + 1
 
     def prueba_trabajo(self, bloque: Bloque) ->str:
         '''Algoritmo simple de prueba de trabajo:
@@ -53,12 +53,12 @@ class Blockchain(object):
             '''
         prueba_del_bloque = 0
         hash_prueba = bloque.calcular_hash()
-        while not self.dificultad(hash_prueba):
+        while not self.dificultad_adecuada(hash_prueba):
             prueba_del_bloque += 1
             hash_prueba = bloque.calcular_hash()
         return hash_prueba
 
-    def dificultad(self,hash_prueba):
+    def dificultad_adecuada(self,hash_prueba):
         for i in range(0, self.dificultad):
                 if hash_prueba[i] != 0:
                     return False
