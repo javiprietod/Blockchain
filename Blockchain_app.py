@@ -4,7 +4,7 @@ import socket
 from flask import Flask, jsonify, request
 from argparse import ArgumentParser
 # Instancia del nodo
-app =Flask(__name__)
+app = Flask(__name__)
 # Instanciacion de la aplicacion
 blockchain =BlockChain.Blockchain()
 # Para saber mi ip

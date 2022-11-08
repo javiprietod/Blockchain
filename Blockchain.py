@@ -36,8 +36,6 @@ class Blockchain(object):
         bloque = Bloque(self.anterior.indice+1, [], time.time(), hash_previo, 0)
         self.anterior = bloque
         hash_previo = self.anterior.hash
-        hash = self.prueba_trabajo(bloque)
-        bloque.hash = hash
         return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
@@ -84,7 +82,7 @@ class Blockchain(object):
         :param hash_bloque:
         :return:
         '''
-        if hash_bloque == bloque.hash():
+        if hash_bloque == bloque.calcular_hash():
             for i in range(0, self.dificultad):
                 if hash_bloque[i] != 0:
                     return False
