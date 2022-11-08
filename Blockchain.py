@@ -19,8 +19,11 @@ class Blockchain(object):
 
     def __init__(self):
         self.dificultad = 4
-        self.anterior = None
+        self.anterior = self.primer_bloque()
         self.transacciones = None
+
+    def primer_bloque(self) ->Bloque:
+        return Bloque(1, [], 0, "1", 0)
 
     def nuevo_bloque(self, hash_previo: str) ->Bloque:
         ''' Crea un nuevo bloque a partir de las transacciones que no estan
