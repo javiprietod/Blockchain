@@ -19,7 +19,7 @@ class Blockchain(object):
 
     def __init__(self):
         self.dificultad = 4
-        self.anterior = None
+        self.anterior = self.primer_bloque()
         self.transacciones = None
 
     def nuevo_bloque(self, hash_previo: str) -> Bloque:
@@ -27,7 +27,7 @@ class Blockchain(object):
             confirmadas
             :param prueba: el valor de prueba a insertar en el bloque
             :param hash_previo: el hash del bloque anterior de la cadena
-            :return: el nuevo gloque
+            :return: el nuevo bloque
         '''
         hash_previo = self.anterior.hash
         prueba = self.prueba_trabajo(bloque)
