@@ -29,8 +29,10 @@ class Blockchain(object):
             :param hash_previo: el hash del bloque anterior de la cadena
             :return: el nuevo bloque
         '''
+        bloque = Bloque(self.anterior.indice+1, [], time.time(), hash_previo, 0)
         hash_previo = self.anterior.hash
         prueba = self.prueba_trabajo(bloque)
+        return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
         transaccion = {"origen": origen, "destino": destino, "cantidad": cantidad, "tiempo": time.time()}
