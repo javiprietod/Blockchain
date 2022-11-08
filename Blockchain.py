@@ -30,6 +30,7 @@ class Blockchain(object):
             :return: el nuevo bloque
         '''
         bloque = Bloque(self.anterior.indice+1, [], time.time(), hash_previo, 0)
+        self.anterior = bloque
         hash_previo = self.anterior.hash
         prueba = self.prueba_trabajo(bloque)
         return bloque
