@@ -21,9 +21,10 @@ class Blockchain(object):
         self.dificultad = 4
         self.anterior = self.primer_bloque()
         self.transacciones = None
+        self.cadena = []
 
     def primer_bloque(self) -> Bloque:
-        return Bloque(0, [], time.time(), "0", 0)
+        self.cadena.append(Bloque(0, [], time.time(), "0", 0))
         
     def nuevo_bloque(self, hash_previo: str) -> Bloque:
         ''' Crea un nuevo bloque a partir de las transacciones que no estan
@@ -35,7 +36,8 @@ class Blockchain(object):
         bloque = Bloque(self.anterior.indice+1, [], time.time(), hash_previo, 0)
         self.anterior = bloque
         hash_previo = self.anterior.hash
-        prueba = self.prueba_trabajo(bloque)
+        bloque.hash_previo = hash_previo
+        hash_prueba = self.prueba_trabajo(bloque)
         return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
@@ -59,6 +61,7 @@ class Blockchain(object):
         while not self.dificultad_adecuada(hash_prueba):
             prueba_del_bloque += 1
             hash_prueba = bloque.calcular_hash()
+        bloque.prueba = prueba_del_bloque
         return hash_prueba
 
     def dificultad_adecuada(self,hash_prueba):
