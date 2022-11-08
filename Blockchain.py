@@ -9,7 +9,7 @@ class Bloque:
         self.timestamp = timestamp
         self.hash_previo = hash_previo
         self.prueba = prueba
-        self.hash = self.calcular_hash()
+        self.hash = None
     # Codigo a completar (inicializacion de los elementos del bloque)
     def calcular_hash(self) -> str:
         block_string =json.dumps(self.__dict__, sort_keys=True)
@@ -33,11 +33,9 @@ class Blockchain(object):
             :param hash_previo: el hash del bloque anterior de la cadena
             :return: el nuevo bloque
         '''
-        bloque = Bloque(self.anterior.indice+1, [], time.time(), hash_previo, 0)
+        bloque = Bloque(self.anterior.indice+1, self.transacciones, time.time(), hash_previo, 0)
         self.anterior = bloque
         hash_previo = self.anterior.hash
-        hash = self.prueba_trabajo(bloque)
-        bloque.hash = hash
         return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
@@ -65,10 +63,7 @@ class Blockchain(object):
         return hash_prueba
 
     def dificultad_adecuada(self,hash_prueba):
-        for i in range(0, self.dificultad):
-                if hash_prueba[i] != 0:
-                    return False
-        return True
+        return hash_prueba[0:self.dificultad] == "0"*self.dificultad
 
     def prueba_valida(self, bloque: Bloque, hash_bloque: str) ->bool:
         '''
@@ -84,25 +79,19 @@ class Blockchain(object):
         :param hash_bloque:
         :return:
         '''
-        if hash_bloque == bloque.hash():
-            for i in range(0, self.dificultad):
-                if hash_bloque[i] != 0:
-                    return False
-            return True
-        else:
-            return False
+        return hash_bloque == bloque.calcular_hash() and hash_bloque[0:self.dificultad] == "0"*self.dificultad
+            
+           
 
     def integra_bloque(self, bloque_nuevo: Bloque, hash_prueba: str) ->bool:
         if bloque_nuevo.hash_previo != self.anterior.hash:
             return False
-        elif not self.prueba_valida(bloque_nuevo, hash_prueba):
+        if not self.prueba_valida(bloque_nuevo, hash_prueba):
             return False
-        else:
-            # actualizamos el hash?
-            self.cadena.append(bloque_nuevo)
-            # que hacemos con las transacciones?
-            self.transacciones = []
-
+        bloque_nuevo.hash = hash_prueba
+        self.cadena.append(bloque_nuevo)
+        self.transacciones = []
+        return True
         
         
         
