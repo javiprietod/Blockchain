@@ -10,6 +10,7 @@ blockchain = Blockchain.Blockchain()
 # Para saber mi ip
 mi_ip =socket.gethostbyname(socket.gethostname())
 
+
 @app.route('/transacciones/nueva', methods=['POST'])
 def nueva_transaccion():
     values =request.get_json()
@@ -21,6 +22,7 @@ def nueva_transaccion():
     index =blockchain.nueva_transaccion(values.origen, values.destino, values.cantidad)
     response = {'mensaje': f'La transaccion se incluira en el bloque con indice {index}'}
     return jsonify(response), 201
+
 
 @app.route('/chain', methods=['GET'])
 def blockchain_completa():
