@@ -22,7 +22,7 @@ class Blockchain(object):
         self.anterior = None
         self.transacciones = None
 
-    def nuevo_bloque(self, hash_previo: str) ->Bloque:
+    def nuevo_bloque(self, hash_previo: str) -> Bloque:
         ''' Crea un nuevo bloque a partir de las transacciones que no estan
             confirmadas
             :param prueba: el valor de prueba a insertar en el bloque
