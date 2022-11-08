@@ -53,10 +53,16 @@ class Blockchain(object):
             '''
         prueba_del_bloque = 0
         hash_prueba = bloque.calcular_hash()
-        while not self.prueba_valida(bloque,hash_prueba):
+        while not self.dificultad(hash_prueba):
             prueba_del_bloque += 1
-            hash_prueba = bloque.calcular_hash
+            hash_prueba = bloque.calcular_hash()
         return hash_prueba
+
+    def dificultad(self,hash_prueba):
+        for i in range(0, self.dificultad):
+                if hash_prueba[i] != 0:
+                    return False
+        return True
 
     def prueba_valida(self, bloque: Bloque, hash_bloque: str) ->bool:
         '''
