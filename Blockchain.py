@@ -41,15 +41,44 @@ class Blockchain(object):
         pass
 
     def prueba_trabajo(self, bloque: Bloque) ->str:
+        '''Algoritmo simple de prueba de trabajo:
+            - Calculara el hash del bloque hasta que encuentre un hash que empiece
+            por tantos ceros como dificultad
+            - Cada vez que el bloque obtenga un hash que no sea adecuado,
+            incrementara en uno el campo de
+            ``prueba del bloque''
+            :param bloque: objeto de tipo bloque
+            :return: el hash del nuevo bloque (dejara el campo de hash del bloque sin
+            modificar)
+            '''
         prueba_del_bloque = 0
         hash_prueba = bloque.calcular_hash()
         while not self.prueba_valida(bloque,hash_prueba):
             prueba_del_bloque += 1
             hash_prueba = bloque.calcular_hash
-        pass
+        return hash_prueba
 
     def prueba_valida(self, bloque: Bloque, hash_bloque: str) ->bool:
-        pass
+        '''
+        Metodo que comprueba si el hash_bloque comienza con tantos ceros como la
+        dificultad estipulada en el
+        blockchain
+        Ademas comprobara que hash_bloque coincide con el valor devuelvo del
+        metodo de calcular hash del
+        bloque.
+        Si cualquiera de ambas comprobaciones es falsa, devolvera falso y en caso
+        contrario, verdarero
+        :param bloque:
+        :param hash_bloque:
+        :return:
+        '''
+        if hash_bloque == bloque.hash():
+            for i in range(0, self.dificultad):
+                if hash_bloque[i] != 0:
+                    return False
+            return True
+        else:
+            return False
 
     def integra_bloque(self, bloque_nuevo: Bloque, hash_prueba: str) ->bool:
         pass
