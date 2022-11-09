@@ -19,9 +19,10 @@ class Blockchain(object):
 
     def __init__(self):
         self.dificultad = 4
-        self.anterior = self.primer_bloque()
         self.transacciones = []
         self.cadena = []
+        self.anterior = self.primer_bloque()
+        
 
     def primer_bloque(self) -> Bloque:
         self.cadena.append(Bloque(0, [], time.time(), "0", 0))
