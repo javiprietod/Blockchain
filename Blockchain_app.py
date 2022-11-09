@@ -32,7 +32,7 @@ def blockchain_completa():
 @app.route('/minar', methods=['GET'])
 def minar():
     # No hay transacciones
-    if len(blockchain.transacciones_no_confirmadas) ==0:
+    if len(blockchain.transacciones) ==0:
         response ={
         'mensaje': "No es posible crear un nuevo bloque. No hay transacciones"
         }
@@ -84,7 +84,7 @@ def blockchain_completa():
     response ={
     # Solamente permitimos la cadena de aquellos bloques finales que tienen hash
     'chain': [b.toDict() for b in blockchain.chain if b.hash is not None],
-    'longitud': len(Blockchain.cadena)
+    'longitud': len(blockchain.cadena)
     }
     return jsonify(response), 200
 if __name__ =='__main__':
