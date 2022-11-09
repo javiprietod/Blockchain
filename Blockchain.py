@@ -7,28 +7,43 @@ import time
 # Definición de la clase bloque
 class Bloque:
     def __init__(self, indice: int, transacciones: list[dict], timestamp: float, hash_previo: str, prueba: int = 0):
+        # Indice del bloque
         self.indice = indice
+        # Transacciones que contiene
         self.transacciones = transacciones
+        # Momento de creación
         self.timestamp = timestamp
+        # Hash del bloque anterior en la cadena
         self.hash_previo = hash_previo
+        # Número de veces que se ha calculado el hash hasta que sea correcta
         self.prueba = prueba
+        # Hash del bloque
         self.hash = None
 
-    # Codigo a completar (inicializacion de los elementos del bloque)
+    # Calcular el hash del bloque
     def calcular_hash(self) -> str:
         block_string =json.dumps(self.__dict__, sort_keys=True)
         return hashlib.sha256(block_string.encode()).hexdigest()
 
-
+# Creación de la clase Blockchain
 class Blockchain(object):
 
     def __init__(self):
+        # Número de 0's necesarios al comienzo del hash
         self.dificultad = 4
+        # Lista de transacciones sin confirmar (sin añadir a un bloque)
         self.transacciones = []
+        # Cadena de todos los bloques
         self.cadena = []
+        # Último bloque de la cadena
         self.anterior = self.primer_bloque()
 
     def primer_bloque(self) -> Bloque:
+        '''
+        Función que crea el primer bloque de la cadena
+        y lo añade a la cadena de bloques. Este bloque
+        comienza siendo el anterior
+        '''
         bloque = Bloque(1, [], time.time(), "0", 0)
         hash_1 = bloque.calcular_hash()
         bloque.hash = hash_1
@@ -42,13 +57,18 @@ class Blockchain(object):
             :param hash_previo: el hash del bloque anterior de la cadena
             :return: el nuevo bloque
         '''
+        # Hash_previo = hash del último bloque de la cadena confiramda
         self.anterior.hash = hash_previo
+        # El índice es uno más que el último de la cadena y su hash comienza como 0
         bloque = Bloque(self.anterior.indice+1, self.transacciones, time.time(), hash_previo, 0)
-        # hash_1 = bloque.calcular_hash()
-        # hash_previo = self.anterior.hash
         return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
+        '''
+        Función que añade una transacción a la lista de transacciones sin confirmar y devuelve
+        el índice del bloque en el que se va a integrar dicha transacción. Ese índice
+        será uno más que el índice del último bloque confirmado
+        '''
         transaccion = {"origen": origen, "destino": destino, "cantidad": cantidad, "tiempo": time.time()}
         self.transacciones.append(transaccion)
         return self.anterior.indice + 1
@@ -64,15 +84,22 @@ class Blockchain(object):
             :return: el hash del nuevo bloque (dejara el campo de hash del bloque sin
             modificar)
             '''
-        # prueba_del_bloque = 0
+        # Primer hash
         hash_prueba = bloque.calcular_hash()
+        # Vuelve a calcularlo, incrementando en uno el valor de prueba hasta 
+        # que sea válido
         while not self.dificultad_adecuada(hash_prueba):
             bloque.prueba += 1
             hash_prueba = bloque.calcular_hash()
-        # bloque.prueba = prueba_del_bloque
+
+        # Hash válido calculado
         return hash_prueba
 
     def dificultad_adecuada(self, hash_prueba):
+        '''
+        Función que comprueba si un hash comienza por tantos
+        ceros como indique la dificultad
+        '''
         return hash_prueba[0:self.dificultad] == "0"*self.dificultad
 
     def prueba_valida(self, bloque: Bloque, hash_bloque: str) -> bool:
@@ -105,13 +132,25 @@ class Blockchain(object):
         :return: True si se ha podido ejecutar bien y False en caso contrario
         (si no ha pasado alguna prueba)
         """
+        # Comprueba que el hash previo coincide
         if bloque_nuevo.hash_previo != self.anterior.hash:
             return False
+
+        # Comprueba que el hash dado sea el correcto
         if not self.prueba_valida(bloque_nuevo, hash_prueba):
             return False
+        
+        # Si todo es correcto, actualiza el hash
         bloque_nuevo.hash = hash_prueba
+
+        # Añade el bloque a la lista de bloques confirmados
         self.cadena.append(bloque_nuevo)
+
+        # Vacía la lista de transacciones sin confirmar
         self.transacciones = []
+
+        # El nuevo último bloque de la cadena será el que 
+        # acabamos de añadir
         self.anterior = bloque_nuevo
 
         return True
