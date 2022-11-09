@@ -1,3 +1,4 @@
+# Importamos las librerías necesarias
 import BlockChain
 from uuid import uuid4
 import socket
@@ -25,48 +26,90 @@ mi_ip = socket.gethostbyname(socket.gethostname())
 
 
 def copia_seguridad(puerto):
+    '''
+    Función que realiza una copia de seguridad del nodo actual
+    y la guarda en un fichero que contiene el id del nodo,
+    así como el puerto en el que se realizan las operaciones
+    '''
+    # Nombre del fichero sobre el que vamos a escribir
     copia = f'respaldo-nodo{mi_ip}-{puerto}.json'
+
+    # Realiza la copia de seguridad cada 60 segundos hasta que se termina
+    # el programa
     while True:
+        # Contenido a escribir en el fichero
         response = {
             'chain': [b.__dict__ for b in blockchain.cadena if b.hash is not None],
             'longitud': len(blockchain.cadena),
             'date': datetime.date.today()
             }
         os.remove(copia)
+        # Abrimos el fichero y escribimos 
         with open(copia, 'a') as file:
             # mutex.acquire()
             # file.write("a")
+            # Escribimos lo necesario
             json.dump(response, file, default=str, indent=1)
             # mutex.release()
+
+            # Dormimos el tiempo estipulado entre copias de seguridad
             time.sleep(5)
             file.close()
 
 
 @app.route('/system', methods=['GET'])
 def system():
+    '''
+    Función que, al realizar el método GET, 
+    devuelve la máquina, el nombre del sistema utilizado
+    y su versión, haciendo uso de la librería platform
+    '''
     response = {
             'maquina': platform.machine(),
             'nombre_sistema': platform.system(),
             'version': platform.version(),
             }
+    # El código 201 indica que todo ha funcionado correctamente
     return jsonify(response), 201
 
 
 @app.route('/transacciones/nueva', methods=['POST'])
 def nueva_transaccion():
+    '''
+    Función que añade una transación a la lista de transacciones
+    sin confirmar de blockchain al usar el método "POST"
+    '''
+    # Coge los valores del JSON que se ha introducido con la petición
     values = request.get_json()
-    # Comprobamos que todos los datos de la transaccion estan
+
+    # Comprobamos que están todos los datos de la transaccion
     required = ['origen', 'destino', 'cantidad']
+
     if not all(k in values for k in required):
+        # En caso de que no estén, devuelven un mensaje de error y 
+        # el código de error correspondiente
         return 'Faltan valores', 400
-    # Creamos una nueva transaccion aqui
+
+    # Creamos una nueva transaccion aquí, con los valores dados por el 
+    # usuario y la función nueva_transacción de Blockchain.py
     index = blockchain.nueva_transaccion(values['origen'], values['destino'], values['cantidad'])
+
+    # Una vez se ha realizado la operación, se imprime un mensaje confirmado la acción
+    # y en el que se indica el índice del bloque en el que se añadirá la transacción
+    # (devuelto por blockchain.transaccion)
     response = {'mensaje': f'La transaccion se incluira en el bloque con indice {index}'}
+
+    # Da la respuesta en el formato correspondiente con su código asociado
     return jsonify(response), 201
 
 
 @app.route('/chain', methods=['GET'])
 def blockchain_completa():
+    '''
+    Función que devuelve toda la cadena de bloques
+    que se han realizado, especificando los detalles de cada bloque
+    al usar 'GET'.
+    '''
     response = {
         'chain': [b.__dict__ for b in blockchain.cadena if b.hash is not None],
         'longitud': len(blockchain.cadena)
@@ -76,22 +119,48 @@ def blockchain_completa():
 
 @app.route('/minar', methods=['GET'])
 def minar():
-    # No hay transacciones
-
+    '''
+    Función que mina un bloque que tiene como transacciones las transacciones
+    sin confirmar que contenga el objeto blockchain
+    '''
+    # Si no hay transacciones no se puede minar un nuevo bloque
     if len(blockchain.transacciones) == 0:
 
         response = {
             'mensaje': "No es posible crear un nuevo bloque. No hay transacciones"
         }
+    
+    # En caso de que sí haya transacciones, se mina el bloque
     else:
         # Hay transaccion, por lo tanto ademas de minear el bloque, recibimos
         # recompensa
+
+        # Guardamos el hash del bloque anterior de la cadena
         previous_hash = blockchain.anterior.hash
+
+        # Recibimos un pago por minar el bloque. Creamos una nueva transaccion con:
+        # Dejamos como origen el 0
+        # Destino nuestra ip
+        # Cantidad = 1
         blockchain.nueva_transaccion("0", mi_ip, 1)
+
+        # Creamos un nuevo bloque, a continuación del último que
+        # había en la cadena
         bloque_nuevo = blockchain.nuevo_bloque(previous_hash)
+
+        # Calculamos el hash y actualizamos el valor del
+        # campo prueba del bloque
         hash_prueba = blockchain.prueba_trabajo(bloque_nuevo)
+
+        # Para evitar que se realice una copia de seguridad
+        # si se está modificando la cadena
         mutex.acquire()
+
+        # Vemos si se puede integrar correctamente el bloque a la cadena
         if blockchain.integra_bloque(bloque_nuevo, hash_prueba):
+            
+            # Si es el caso, se inttegra en la función correctamente
+            # y se crea un mensaje con los detalles
             response = {
                 'mensaje': "Nuevo bloque minado",
                 "id": bloque_nuevo.indice,
@@ -102,24 +171,35 @@ def minar():
                 "timestamp": bloque_nuevo.timestamp
             }
         else:
+            # Si no se ha podido integrar a la cadena, devuelve un
+            # mensaje de error
             response = {'mensaje': 'No se puede minar nuevo bloque'}
+
+        # Ya se puede hacer la copia de seguridad
         mutex.release()
 
-    # Recibimos un pago por minar el bloque. Creamos una nueva transaccion con:
-    # Dejamos como origen el 0
-    # Destino nuestra ip
-    # Cantidad = 1
-    # [Completar el siguiente codigo]
+    # Devuelve el código y el mensaje adecuados
     return jsonify(response), 200
 
 
 
 if __name__ == '__main__':
+    '''
+    Main principal del programa
+    '''
     parser = ArgumentParser()
     parser.add_argument('-p', '--puerto', default=5000, type=int, help='puerto para escuchar')
     args = parser.parse_args()
     puerto = args.puerto
+
+    # Creación del hilo que realiza la copia de seguridad cada 60 segundos
     copia_de_seguridad = Thread(target=copia_seguridad, args=(puerto,))
+    
+    # Iniciamos el hilo
     copia_de_seguridad.start()
+
+    # Iniciamos la aplicación
     app.run(host='0.0.0.0', port=puerto)
+
+    # Finalización del hilo de la copia de seguridad
     copia_de_seguridad.join()
