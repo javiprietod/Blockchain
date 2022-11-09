@@ -6,6 +6,8 @@ from argparse import ArgumentParser
 from threading import Semaphore, Thread
 import time, datetime
 import json
+import os
+import platform
 mutex = Semaphore(1)
 # Instancia del nodo
 app = Flask(__name__)
@@ -20,14 +22,23 @@ def copia_seguridad(puerto):
             'longitud': len(blockchain.cadena),
             'date': datetime.date.today()
             }
-        with open(copia, 'w') as file:
+        os.remove(copia)
+        with open(copia, 'a') as file:
             #mutex.acquire()
-            file.write("a")
+            # file.write("a")
             json.dump(response,file, default=str,indent=1)
             #mutex.release()
             time.sleep(5)
             file.close()
 
+@app.route('/system',methods=['GET'])
+def system():
+    response ={
+            'maquina':platform.machine(),
+            'nombre_sistema':platform.system(),
+            'version':platform.version(),
+            }
+    return jsonify(response), 201
 
 @app.route('/transacciones/nueva', methods=['POST'])
 def nueva_transaccion():
