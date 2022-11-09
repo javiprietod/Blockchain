@@ -32,7 +32,7 @@ def blockchain_completa():
 @app.route('/minar', methods=['GET'])
 def minar():
     # No hay transacciones
-    if len(blockchain.transacciones_no_confirmadas) ==0:
+    if len(blockchain.transacciones) == 0:
         response ={
         'mensaje': "No es posible crear un nuevo bloque. No hay transacciones"
         }
@@ -40,7 +40,8 @@ def minar():
         # Hay transaccion, por lo tanto ademas de minear el bloque, recibimos recompensa
         previous_hash =blockchain.last_block.hash
         blockchain.nueva_transaccion("0", mi_ip, 1)
-        blockchain.nuevo_bloque(previous_hash)
+        nuevo_bloque = blockchain.nuevo_bloque(previous_hash)
+        blockchain.integra_boque(nuevo_bloque,hash_previo)
         response ={
         'mensaje': "Nuevo bloque minado"
         }
