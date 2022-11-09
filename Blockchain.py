@@ -1,19 +1,24 @@
+# Importamos las librerías necesarias
 import json
 import hashlib
 import time
 
+
+# Definición de la clase bloque
 class Bloque:
-    def __init__(self, indice: int, transacciones: list[dict], timestamp: float, hash_previo: str, prueba: int =0):
+    def __init__(self, indice: int, transacciones: list[dict], timestamp: float, hash_previo: str, prueba: int = 0):
         self.indice = indice
         self.transacciones = transacciones
         self.timestamp = timestamp
         self.hash_previo = hash_previo
         self.prueba = prueba
         self.hash = None
+
     # Codigo a completar (inicializacion de los elementos del bloque)
     def calcular_hash(self) -> str:
         block_string =json.dumps(self.__dict__, sort_keys=True)
         return hashlib.sha256(block_string.encode()).hexdigest()
+
 
 class Blockchain(object):
 
@@ -22,7 +27,6 @@ class Blockchain(object):
         self.transacciones = []
         self.cadena = []
         self.anterior = self.primer_bloque()
-        
 
     def primer_bloque(self) -> Bloque:
         bloque = Bloque(1, [], time.time(), "0", 0)
@@ -30,7 +34,7 @@ class Blockchain(object):
         bloque.hash = hash_1
         self.cadena.append(bloque)
         return bloque
-        
+
     def nuevo_bloque(self, hash_previo: str) -> Bloque:
         ''' Crea un nuevo bloque a partir de las transacciones que no estan
             confirmadas
@@ -40,10 +44,8 @@ class Blockchain(object):
         '''
         self.anterior.hash = hash_previo
         bloque = Bloque(self.anterior.indice+1, self.transacciones, time.time(), hash_previo, 0)
-        #hash_1 = bloque.calcular_hash()
-        
-        
-        #hash_previo = self.anterior.hash
+        # hash_1 = bloque.calcular_hash()
+        # hash_previo = self.anterior.hash
         return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
@@ -62,50 +64,46 @@ class Blockchain(object):
             :return: el hash del nuevo bloque (dejara el campo de hash del bloque sin
             modificar)
             '''
-        #prueba_del_bloque = 0
+        # prueba_del_bloque = 0
         hash_prueba = bloque.calcular_hash()
         while not self.dificultad_adecuada(hash_prueba):
             bloque.prueba += 1
             hash_prueba = bloque.calcular_hash()
-        #bloque.prueba = prueba_del_bloque
+        # bloque.prueba = prueba_del_bloque
         return hash_prueba
 
-    def dificultad_adecuada(self,hash_prueba):
+    def dificultad_adecuada(self, hash_prueba):
         return hash_prueba[0:self.dificultad] == "0"*self.dificultad
 
-    def prueba_valida(self, bloque: Bloque, hash_bloque: str) ->bool:
+    def prueba_valida(self, bloque: Bloque, hash_bloque: str) -> bool:
         '''
-        Metodo que comprueba si el hash_bloque comienza con tantos ceros como la
-        dificultad estipulada en el
-        blockchain
+        Metodo que comprueba si el hash_bloque comienza con tantos ceros como
+        la dificultad estipulada en el blockchain
         Ademas comprobara que hash_bloque coincide con el valor devuelvo del
-        metodo de calcular hash del
-        bloque.
-        Si cualquiera de ambas comprobaciones es falsa, devolvera falso y en caso
-        contrario, verdarero
+        metodo de calcular hash del bloque.
+        Si cualquiera de ambas comprobaciones es falsa, devolvera falso y en
+        caso contrario, verdarero
         :param bloque:
         :param hash_bloque:
         :return:
         '''
         return hash_bloque == bloque.calcular_hash() and hash_bloque[0:self.dificultad] == "0"*self.dificultad
-            
-           
 
     def integra_bloque(self, bloque_nuevo: Bloque, hash_prueba: str) -> bool:
         """
         Metodo para integran correctamente un bloque a la cadena de bloques.
         Debe comprobar que la prueba de hash es valida y que el hash del bloque
         ultimo de la cadena
-        coincida con el hash_previo del bloque que se va a integrar. Si pasa las
-        comprobaciones, actualiza el hash
+        coincida con el hash_previo del bloque que se va a integrar. Si pasa
+        las comprobaciones, actualiza el hash
         del bloque a integrar, lo inserta en la cadena y hace un reset de las
         transacciones no confirmadas (
         vuelve
         a dejar la lista de transacciones no confirmadas a una lista vacia)
         :param bloque_nuevo: el nuevo bloque que se va a integrar
         :param hash_prueba: la prueba de hash
-        :return: True si se ha podido ejecutar bien y False en caso contrario (si
-        no ha pasado alguna prueba)
+        :return: True si se ha podido ejecutar bien y False en caso contrario
+        (si no ha pasado alguna prueba)
         """
         if bloque_nuevo.hash_previo != self.anterior.hash:
             return False
@@ -115,6 +113,5 @@ class Blockchain(object):
         self.cadena.append(bloque_nuevo)
         self.transacciones = []
         self.anterior = bloque_nuevo
-        
+
         return True
-        
