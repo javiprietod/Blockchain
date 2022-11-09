@@ -25,7 +25,11 @@ class Blockchain(object):
         
 
     def primer_bloque(self) -> Bloque:
-        self.cadena.append(Bloque(0, [], time.time(), "0", 0))
+        bloque = Bloque(1, [], time.time(), "0", 0)
+        hash_1 = bloque.calcular_hash()
+        bloque.hash = hash_1
+        self.cadena.append(bloque)
+        return bloque
         
     def nuevo_bloque(self, hash_previo: str) -> Bloque:
         ''' Crea un nuevo bloque a partir de las transacciones que no estan
@@ -34,9 +38,12 @@ class Blockchain(object):
             :param hash_previo: el hash del bloque anterior de la cadena
             :return: el nuevo bloque
         '''
+        self.anterior.hash = hash_previo
         bloque = Bloque(self.anterior.indice+1, self.transacciones, time.time(), hash_previo, 0)
-        self.anterior = bloque
-        hash_previo = self.anterior.hash
+        #hash_1 = bloque.calcular_hash()
+        
+        
+        #hash_previo = self.anterior.hash
         return bloque
 
     def nueva_transaccion(self, origen: str, destino: str, cantidad: int) -> int:
@@ -55,12 +62,12 @@ class Blockchain(object):
             :return: el hash del nuevo bloque (dejara el campo de hash del bloque sin
             modificar)
             '''
-        prueba_del_bloque = 0
+        #prueba_del_bloque = 0
         hash_prueba = bloque.calcular_hash()
         while not self.dificultad_adecuada(hash_prueba):
-            prueba_del_bloque += 1
+            bloque.prueba += 1
             hash_prueba = bloque.calcular_hash()
-        bloque.prueba = prueba_del_bloque
+        #bloque.prueba = prueba_del_bloque
         return hash_prueba
 
     def dificultad_adecuada(self,hash_prueba):
@@ -107,5 +114,7 @@ class Blockchain(object):
         bloque_nuevo.hash = hash_prueba
         self.cadena.append(bloque_nuevo)
         self.transacciones = []
+        self.anterior = bloque_nuevo
+        
         return True
         
