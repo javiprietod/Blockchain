@@ -182,6 +182,42 @@ def minar():
     return jsonify(response), 200
 
 
+@app.route('/nodos/registrar', methods=['POST'])
+def registrar_nodos_completo():
+    values = request.get_json()
+    global blockchain
+    global nodos_red
+    nodos_nuevos =values.get('direccion_nodos')
+    if nodos_nuevos is None:
+        return "Error: No se ha proporcionado una lista de nodos", 400
+    all_correct =True
+    #[Codigo a desarrollar]
+    # Fin codigo a desarrollar
+    if all_correct:
+        response ={
+        'mensaje': 'Se han incluido nuevos nodos en la red',
+        'nodos_totales': list(nodos_red)
+        }
+    else:
+        response ={
+        'mensaje': 'Error notificando el nodo estipulado',
+        }
+    return jsonify(response), 201
+
+
+@app.route('/nodos/registro_simple', methods=['POST'])
+def registrar_nodo_actualiza_blockchain():
+    # Obtenemos la variable global de blockchain
+    global blockchain
+    read_json =request.get_json()
+    nodes_addreses =read_json.get("nodos_direcciones")
+    # [...] Codigo a desarrollar
+    #[...] fin del codigo a desarrollar
+    if blockchain_leida is None:
+        return "El blockchain de la red esta currupto", 400
+    else:
+        blockchain =blockchain_leida
+    return "La blockchain del nodo" +str(mi_ip) +":" +str(puerto) +"ha sido correctamente actualizada", 200
 
 if __name__ == '__main__':
     '''
