@@ -1,5 +1,5 @@
 # Importamos las librerías necesarias
-import BlockChain
+import Blockchain
 from uuid import uuid4
 import socket
 from flask import Flask, jsonify, request
@@ -19,10 +19,10 @@ mutex = Semaphore(1)
 app = Flask(__name__)
 
 # Instanciacion de la aplicacion
-blockchain = BlockChain.Blockchain()
+blockchain = Blockchain.Blockchain()
 
 # Para saber mi ip
-mi_ip = socket.gethostbyname(socket.gethostname())
+mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
 
 
 def copia_seguridad(puerto):
@@ -43,17 +43,14 @@ def copia_seguridad(puerto):
             'longitud': len(blockchain.cadena),
             'date': datetime.date.today()
             }
-        os.remove(copia)
         # Abrimos el fichero y escribimos 
-        with open(copia, 'a') as file:
-            # mutex.acquire()
-            # file.write("a")
+        with open(copia, 'w') as file:
+            mutex.acquire()
             # Escribimos lo necesario
             json.dump(response, file, default=str, indent=1)
-            # mutex.release()
-
             # Dormimos el tiempo estipulado entre copias de seguridad
             file.close()
+            mutex.release()
             time.sleep(5)
             
 

@@ -6,7 +6,7 @@ import time
 
 # Definición de la clase bloque
 class Bloque:
-    def __init__(self, indice: int, transacciones: list[dict], timestamp: float, hash_previo: str, prueba: int = 0):
+    def __init__(self, indice: int, transacciones, timestamp: float, hash_previo: str, prueba: int = 0):
         # Indice del bloque
         self.indice = indice
         # Transacciones que contiene
