@@ -10,6 +10,7 @@ import datetime
 import json
 import os
 import platform
+import requests
 
 # Semáforo para controlar el acceso a la zona crítica 
 # (cadena de bloques)
@@ -20,7 +21,7 @@ app = Flask(__name__)
 
 # Instanciacion de la aplicacion
 blockchain = Blockchain.Blockchain()
-
+nodos_red = []
 # Para saber mi ip
 mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
 
@@ -190,6 +191,9 @@ def registrar_nodos_completo():
         return "Error: No se ha proporcionado una lista de nodos", 400
     all_correct =True
     #[Codigo a desarrollar]
+    mi_nodo = f'http://localhost:{puerto}'
+    for nodo in nodos_nuevos:
+        nodos_red.append(nodo) if nodo != mi_nodo else None
     # Fin codigo a desarrollar
     if all_correct:
         response ={
@@ -210,6 +214,16 @@ def registrar_nodo_actualiza_blockchain():
     read_json =request.get_json()
     nodes_addreses =read_json.get("nodos_direcciones")
     # [...] Codigo a desarrollar
+
+    
+
+
+
+
+
+    response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
+
+
     #[...] fin del codigo a desarrollar
     if blockchain_leida is None:
         return "El blockchain de la red esta currupto", 400
@@ -222,10 +236,10 @@ if __name__ == '__main__':
     Main principal del programa
     '''
     parser = ArgumentParser()
+    
     parser.add_argument('-p', '--puerto', default=5000, type=int, help='puerto para escuchar')
     args = parser.parse_args()
     puerto = args.puerto
-
     # Creación del hilo que realiza la copia de seguridad cada 60 segundos
     copia_de_seguridad = Thread(target=copia_seguridad, args=(puerto,))
     
