@@ -191,9 +191,9 @@ def registrar_nodos_completo():
         return "Error: No se ha proporcionado una lista de nodos", 400
     all_correct =True
     #[Codigo a desarrollar]
-    mi_nodo = f'http://localhost:{puerto}'
+    
     for nodo in nodos_nuevos:
-        nodos_red.append(nodo) if nodo != mi_nodo else None
+        nodos_red.append(nodo)
     # Fin codigo a desarrollar
     if all_correct:
         response ={
