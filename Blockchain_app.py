@@ -53,8 +53,9 @@ def copia_seguridad(puerto):
             # mutex.release()
 
             # Dormimos el tiempo estipulado entre copias de seguridad
-            time.sleep(5)
             file.close()
+            time.sleep(5)
+            
 
 
 @app.route('/system', methods=['GET'])
