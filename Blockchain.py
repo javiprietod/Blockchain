@@ -24,6 +24,12 @@ class Bloque:
     def calcular_hash(self) -> str:
         block_string =json.dumps(self.__dict__, sort_keys=True)
         return hashlib.sha256(block_string.encode()).hexdigest()
+    
+    def toDict(bloque):
+        '''
+        Función que convierte un bloque en un diccionario
+        '''
+        return bloque.__dict__
 
 # Creación de la clase Blockchain
 class Blockchain(object):
@@ -134,11 +140,11 @@ class Blockchain(object):
         """
         # Comprueba que el hash previo coincide
         if bloque_nuevo.hash_previo != self.anterior.hash:
-            return False
+            return "No valido prueba"
 
         # Comprueba que el hash dado sea el correcto
         if not self.prueba_valida(bloque_nuevo, hash_prueba):
-            return False
+            return "no hash valido"
         
         # Si todo es correcto, actualiza el hash
         bloque_nuevo.hash = hash_prueba
