@@ -192,18 +192,23 @@ def registrar_nodos_completo():
     all_correct =True
     #[Codigo a desarrollar]
 
-    nodo = ['']
+    mi_nodo = [f'http://{mi_ip}:{puerto}']
+
+    if mi_nodo in nodos_nuevos:
+        nodos_nuevos.remove(mi_nodo)
+
     for nodo in nodos_nuevos:
         nodos_red.append(nodo) 
     
-    for nodo in nodos_nuevos:
-        nodos_red.append(nodo)
-
-    response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
-    if response.status_code() == 400:
-        all_correct = False
+    for nodo in nodos_red:
+        temp = nodos_red.copy()
+        temp.remove(nodo)
+        data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': requests.get(mi_nodo+"/chain")}
         response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
-    
+        if response.status_code() == 400:
+            all_correct = False
+            
+        
     # Fin codigo a desarrollar
     if all_correct:
         response ={
@@ -225,7 +230,10 @@ def registrar_nodo_actualiza_blockchain():
     nodes_addreses = read_json.get("nodos_direcciones")
     # [...] Codigo a desarrollar
 
-
+    for nodo in nodes_addreses:
+        if nodo not in nodos_red:
+            nodos_red.append(nodo)
+    
 
     #[...] fin del codigo a desarrollar
     if blockchain_leida is None:
