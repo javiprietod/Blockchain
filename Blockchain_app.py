@@ -1,6 +1,5 @@
 # Importamos las librerías necesarias
 import Blockchain
-from uuid import uuid4
 import socket
 from flask import Flask, jsonify, request
 from argparse import ArgumentParser
@@ -222,16 +221,18 @@ def registrar_nodos_completo():
     if nodos_nuevos is None:
         return "Error: No se ha proporcionado una lista de nodos", 400
     all_correct =True
-    #[Codigo a desarrollar]
 
+    # Almacenamos nuestra ip en una lista para luego poder sumarla a la lista de nodos
     mi_nodo = [f'http://{mi_ip}:{puerto}']
 
-    if mi_nodo in nodos_nuevos:
-        nodos_nuevos.remove(mi_nodo)
+    # Comprobamos que en los nodos nuevos no esté nuestra ip
+    nodos_nuevos.remove(mi_nodo) if mi_nodo in nodos_nuevos else None
 
+    # Añadimos los nodos nuevos a la lista de nodos
     for nodo in nodos_nuevos:
         nodos_red.append(nodo) if nodo not in nodos_red else None
     
+    # Introducimos los nodos nuevos en nuestra red de blockchain
     for nodo in nodos_red:
         temp = nodos_red.copy()
         temp.remove(nodo)
@@ -242,7 +243,6 @@ def registrar_nodos_completo():
 
          
         
-    # Fin codigo a desarrollar
     if all_correct:
         response ={
         'mensaje': 'Se han incluido nuevos nodos en la red',
@@ -261,21 +261,21 @@ def registrar_nodo_actualiza_blockchain():
     # Obtenemos la variable global de blockchain
     global blockchain
     read_json = request.get_json()
+    # Obtenemos la lista de nodos a añadir
     nodes_addreses = read_json.get("nodos_direcciones")
-    # [...] Codigo a desarrollar
-
-    for nodo in nodes_addreses:
-        if nodo not in nodos_red:
-            nodos_red.append(nodo)
     
-
+    # Actualizamos la lista de nodos con los nodos introducidos en la peticion
+    for nodo in nodes_addreses:
+        nodos_red.append(nodo) if nodo not in nodos_red else None
+    
+    # Actualizamos la blockchain con la blockchain introducida en la peticion
     data = read_json.get("blockchain")
     data = data['chain']
     blockchain_leida = actualizar_blockchain(data)
-    #[...] fin del codigo a desarrollar
     if blockchain_leida == 1:
         return "El blockchain de la red esta currupto", 400
     else:
+        # Actualizamos la blockchain
         blockchain = blockchain_leida
     return "La blockchain del nodo" +str(mi_ip) +":" +str(puerto) +"ha sido correctamente actualizada", 200
 
@@ -283,8 +283,9 @@ def resuelve_conflictos():
     global blockchain
     global nodos_red
     longitud_actual = len(blockchain.cadena)
-    # [Codigo a completar]
 
+   # Comprobamos si la cadena de alguno de los nodos es más larga que la nuestra
+   # Si es así, devolvemos False para más tarde actualizamos la nuestra  
     for nodo in nodos_red:
         response = requests.get(str(nodo) +'/chain').json()
         if response.get('longitud') > longitud_actual:
@@ -294,7 +295,7 @@ def resuelve_conflictos():
     
 if __name__ == '__main__':
     '''
-    Main principal del programa
+    Main del programa
     '''
     parser = ArgumentParser()
     puerto = input()
