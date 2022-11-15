@@ -55,6 +55,21 @@ def copia_seguridad(puerto):
             mutex.release()
             time.sleep(5)
             
+def actualizar_blockchain(data):
+    blockchain_leida = Blockchain.Blockchain()
+    primero = Blockchain.Bloque(data[0]['indice'],data[0]['transacciones'],data[0]['timestamp'],data[0]['hash_previo'],data[0]['prueba'])
+    primero.timestamp = data[0]['timestamp']
+    primero.hash = data[0]['hash']
+    blockchain_leida.cadena = [primero]
+    blockchain_leida.anterior = primero
+    for i in range(1,len(data)):
+        bloque_nuevo = Blockchain.Bloque(data[i]['indice'],data[i]['transacciones'],data[i]['timestamp'],data[i]['hash_previo'],data[i]['prueba'])
+        
+        valido = blockchain_leida.integra_bloque(bloque_nuevo,data[i]['hash'])
+        if not valido:
+            blockchain_leida = None
+            break
+    return blockchain_leida
 
 @app.route('/system', methods=['GET'])
 def system():
@@ -121,6 +136,7 @@ def blockchain_completa():
 
 @app.route('/minar', methods=['GET'])
 def minar():
+    global blockchain
     '''
     Función que mina un bloque que tiene como transacciones las transacciones
     sin confirmar que contenga el objeto blockchain
@@ -134,9 +150,16 @@ def minar():
     
     elif not resuelve_conflictos():
         response = {'mensaje': "Ha habido un conflicto. Esta cadena se ha actualizado con una version mas larga"}
-        
+        longitud_actual = len(blockchain.cadena)
+        for nodo in nodos_red:
+            response2 = requests.get(str(nodo) +'/chain').json()
+            if response2.get('longitud') > longitud_actual:
+                nodo_mayor = nodo
+                
+        response3 = requests.get(str(nodo_mayor) +'/chain').json()
+        data = response3.get('chain')
+        blockchain = actualizar_blockchain(data)
     else:
-
         # En caso de que sí haya transacciones, se mina el bloque
         # Hay transaccion, por lo tanto ademas de minear el bloque, recibimos
         # recompensa
@@ -245,19 +268,7 @@ def registrar_nodo_actualiza_blockchain():
 
     data = read_json.get("blockchain")
     data = data['chain']
-    blockchain_leida = Blockchain.Blockchain()
-    primero = Blockchain.Bloque(data[0]['indice'],data[0]['transacciones'],data[0]['timestamp'],data[0]['hash_previo'],data[0]['prueba'])
-    primero.timestamp = data[0]['timestamp']
-    primero.hash = data[0]['hash']
-    blockchain_leida.cadena = [primero]
-    blockchain_leida.anterior = primero
-    for i in range(1,len(data)):
-        bloque_nuevo = Blockchain.Bloque(data[i]['indice'],data[i]['transacciones'],data[i]['timestamp'],data[i]['hash_previo'],data[i]['prueba'])
-        
-        valido = blockchain_leida.integra_bloque(bloque_nuevo,data[i]['hash'])
-        if not valido:
-            blockchain_leida = None
-            break
+    blockchain_leida = actualizar_blockchain(data)
     #[...] fin del codigo a desarrollar
     if blockchain_leida == 1:
         return "El blockchain de la red esta currupto", 400
