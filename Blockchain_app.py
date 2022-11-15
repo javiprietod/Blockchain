@@ -203,7 +203,7 @@ def registrar_nodos_completo():
     for nodo in nodos_red:
         temp = nodos_red.copy()
         temp.remove(nodo)
-        data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': requests.get(mi_nodo+"/chain")}
+        data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': requests.get(mi_nodo[0]+"/chain")}
         response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
         if response.status_code() == 400:
             all_correct = False
