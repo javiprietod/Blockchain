@@ -102,6 +102,9 @@ def nueva_transaccion():
     return jsonify(response), 201
 
 
+
+
+
 @app.route('/chain', methods=['GET'])
 def blockchain_completa():
     '''
@@ -110,7 +113,7 @@ def blockchain_completa():
     al usar 'GET'.
     '''
     response = {
-        'chain': [b.__dict__ for b in blockchain.cadena if b.hash is not None],
+        'chain': [b.toDict() for b in blockchain.cadena if b.hash is not None],
         'longitud': len(blockchain.cadena)
     }
     return jsonify(response), 200
@@ -203,11 +206,15 @@ def registrar_nodos_completo():
     for nodo in nodos_red:
         temp = nodos_red.copy()
         temp.remove(nodo)
+        data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': {'chain': [b.toDict() for b in blockchain.cadena if b.hash is not None]}}
+        response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
+        if response.status_code == 400:
         data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': requests.get(mi_nodo[0]+"/chain")}
         response = requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
         if response.status_code == 400:
             all_correct = False
-            
+
+         
         
     # Fin codigo a desarrollar
     if all_correct:
@@ -219,8 +226,8 @@ def registrar_nodos_completo():
         response ={
         'mensaje': 'Error notificando el nodo estipulado',
         }
-    return jsonify(response), 201
-
+    
+    return jsonify(response), 201  
 
 @app.route('/nodos/registro_simple', methods=['POST'])
 def registrar_nodo_actualiza_blockchain():
@@ -239,18 +246,18 @@ def registrar_nodo_actualiza_blockchain():
     data = data['chain']
     blockchain_leida = Blockchain.Blockchain()
     for i in range(len(data)):
+    for i in range(len(data)):
         bloque_nuevo = Blockchain.Bloque(data[i]['indice'],data[i]['transacciones'],data[i]['timestamp'],data[i]['hash_previo'],data[i]['prueba'])
-        bloque_nuevo.timestamp = data[i]['timestamp']
-        if i == 0:
-            blockchain_leida.anterior = bloque_nuevo
-
+        
         valido = blockchain_leida.integra_bloque(bloque_nuevo,data[i]['hash'])
         if not valido:
             blockchain_leida = None
             break
     #[...] fin del codigo a desarrollar
-    if blockchain_leida is None:
+    if blockchain_leida == 1:
         return "El blockchain de la red esta currupto", 400
+    elif blockchain_leida == 2:
+        return "El blockchain de la red esta currupto", 401
     else:
         blockchain = blockchain_leida
     return "La blockchain del nodo" +str(mi_ip) +":" +str(puerto) +"ha sido correctamente actualizada", 200
@@ -261,8 +268,8 @@ if __name__ == '__main__':
     Main principal del programa
     '''
     parser = ArgumentParser()
-    
-    parser.add_argument('-p', '--puerto', default=5000, type=int, help='puerto para escuchar')
+    puerto = input()
+    parser.add_argument('-p', '--puerto', default=puerto, type=int, help='puerto para escuchar')
     args = parser.parse_args()
     puerto = args.puerto
     # Creación del hilo que realiza la copia de seguridad cada 60 segundos
