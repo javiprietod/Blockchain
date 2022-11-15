@@ -3,96 +3,12 @@
   {
    "indice": 1,
    "transacciones": [],
-   "timestamp": 1668536455.915589,
+   "timestamp": 1668537105.095972,
    "hash_previo": "0",
    "prueba": 0,
-   "hash": "a84937328e804117f3536b5817435ca754f9132a7807df831f848ebe07ad5d7f"
-  },
-  {
-   "indice": 2,
-   "transacciones": [
-    {
-     "origen": "nodoA",
-     "destino": "nodoB",
-     "cantidad": 10,
-     "tiempo": 1668536472.39361
-    },
-    {
-     "origen": "0",
-     "destino": "127.0.0.1",
-     "cantidad": 1,
-     "tiempo": 1668536472.3968399
-    }
-   ],
-   "timestamp": 1668536472.396843,
-   "hash_previo": "a84937328e804117f3536b5817435ca754f9132a7807df831f848ebe07ad5d7f",
-   "prueba": 296794,
-   "hash": "000058106f5254a76414851b1fe2fe402834ffd834d5d3ac3417abe7879d3b79"
-  },
-  {
-   "indice": 3,
-   "transacciones": [
-    {
-     "origen": "nodoA",
-     "destino": "nodoB",
-     "cantidad": 10,
-     "tiempo": 1668536475.646373
-    },
-    {
-     "origen": "0",
-     "destino": "127.0.0.1",
-     "cantidad": 1,
-     "tiempo": 1668536475.658255
-    }
-   ],
-   "timestamp": 1668536475.6582558,
-   "hash_previo": "000058106f5254a76414851b1fe2fe402834ffd834d5d3ac3417abe7879d3b79",
-   "prueba": 58412,
-   "hash": "0000a1580fd65d23338b261ab9b41602bbdb4c483e7f04091b92aacc19f5e07f"
-  },
-  {
-   "indice": 4,
-   "transacciones": [
-    {
-     "origen": "nodoA",
-     "destino": "nodoB",
-     "cantidad": 10,
-     "tiempo": 1668536486.025255
-    },
-    {
-     "origen": "0",
-     "destino": "127.0.0.1",
-     "cantidad": 1,
-     "tiempo": 1668536486.0420759
-    }
-   ],
-   "timestamp": 1668536486.0420768,
-   "hash_previo": "0000a1580fd65d23338b261ab9b41602bbdb4c483e7f04091b92aacc19f5e07f",
-   "prueba": 114692,
-   "hash": "000092998faf76cddc2099da853fc8391dd02d0b64c190017a300d2f348db295"
-  },
-  {
-   "indice": 5,
-   "transacciones": [
-    {
-     "origen": "nodoA",
-     "destino": "nodoB",
-     "cantidad": 10,
-     "tiempo": 1668536487.2909591
-    },
-    {
-     "origen": "0",
-     "destino": "127.0.0.1",
-     "cantidad": 1,
-     "tiempo": 1668536487.300746
-    }
-   ],
-   "timestamp": 1668536487.300747,
-   "hash_previo": "000092998faf76cddc2099da853fc8391dd02d0b64c190017a300d2f348db295",
-   "prueba": 12536,
-   "hash": "0000cdc5ba4cebbcdc6c0fdbff6655bba909349e6ff234d3296c6d4b5afae878"
+   "hash": "269ca954388954760b3067105ff7d36a719263fbc489bec894c2201225072deb"
   }
  ],
- "longitud": 5,
+ "longitud": 1,
  "date": "2022-11-15"
 }
