@@ -141,12 +141,12 @@ class Blockchain(object):
         # Comprueba que el hash previo coincide
         if bloque_nuevo.hash_previo != self.anterior.hash:
             return "No valido previo"
-            return "No valido prueba"
+
 
         # Comprueba que el hash dado sea el correcto
         if not self.prueba_valida(bloque_nuevo, hash_prueba):
             return "No hash valido"
-            return "no hash valido"
+
         
         # Si todo es correcto, actualiza el hash
         bloque_nuevo.hash = hash_prueba
