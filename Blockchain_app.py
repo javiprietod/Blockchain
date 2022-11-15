@@ -243,7 +243,12 @@ def registrar_nodo_actualiza_blockchain():
     data = read_json.get("blockchain")
     data = data['chain']
     blockchain_leida = Blockchain.Blockchain()
-    for i in range(len(data)):
+    primero = Blockchain.Bloque(data[0]['indice'],data[0]['transacciones'],data[0]['timestamp'],data[0]['hash_previo'],data[0]['prueba'])
+    primero.timestamp = data[0]['timestamp']
+    primero.hash = data[0]['hash']
+    blockchain_leida.cadena = [primero]
+    blockchain_leida.anterior = primero
+    for i in range(1,len(data)):
         bloque_nuevo = Blockchain.Bloque(data[i]['indice'],data[i]['transacciones'],data[i]['timestamp'],data[i]['hash_previo'],data[i]['prueba'])
         
         valido = blockchain_leida.integra_bloque(bloque_nuevo,data[i]['hash'])
@@ -253,8 +258,6 @@ def registrar_nodo_actualiza_blockchain():
     #[...] fin del codigo a desarrollar
     if blockchain_leida == 1:
         return "El blockchain de la red esta currupto", 400
-    elif blockchain_leida == 2:
-        return "El blockchain de la red esta currupto", 401
     else:
         blockchain = blockchain_leida
     return "La blockchain del nodo" +str(mi_ip) +":" +str(puerto) +"ha sido correctamente actualizada", 200
