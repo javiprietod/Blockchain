@@ -55,7 +55,6 @@ def copia_seguridad(puerto):
             time.sleep(5)
             
 
-
 @app.route('/system', methods=['GET'])
 def system():
     '''
@@ -230,6 +229,7 @@ def registrar_nodo_actualiza_blockchain():
     else:
         blockchain =blockchain_leida
     return "La blockchain del nodo" +str(mi_ip) +":" +str(puerto) +"ha sido correctamente actualizada", 200
+
 
 if __name__ == '__main__':
     '''
