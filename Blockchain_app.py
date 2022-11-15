@@ -26,6 +26,7 @@ nodos_red = []
 mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
 
 
+
 def copia_seguridad(puerto):
     '''
     Función que realiza una copia de seguridad del nodo actual
@@ -190,9 +191,13 @@ def registrar_nodos_completo():
         return "Error: No se ha proporcionado una lista de nodos", 400
     all_correct =True
     #[Codigo a desarrollar]
-    
+
     for nodo in nodos_nuevos:
         nodos_red.append(nodo)
+
+    response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
+    if response.status_code() == 400:
+        all_correct = False
     # Fin codigo a desarrollar
     if all_correct:
         response ={
@@ -210,14 +215,9 @@ def registrar_nodos_completo():
 def registrar_nodo_actualiza_blockchain():
     # Obtenemos la variable global de blockchain
     global blockchain
-    read_json =request.get_json()
-    nodes_addreses =read_json.get("nodos_direcciones")
+    read_json = request.get_json()
+    nodes_addreses = read_json.get("nodos_direcciones")
     # [...] Codigo a desarrollar
-
-    
-
-
-
 
 
     response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
