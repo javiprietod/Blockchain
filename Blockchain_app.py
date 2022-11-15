@@ -192,12 +192,18 @@ def registrar_nodos_completo():
     all_correct =True
     #[Codigo a desarrollar]
 
+    nodo = ['']
+    for nodo in nodos_nuevos:
+        nodos_red.append(nodo) 
+    
     for nodo in nodos_nuevos:
         nodos_red.append(nodo)
 
     response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
     if response.status_code() == 400:
         all_correct = False
+        response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
+    
     # Fin codigo a desarrollar
     if all_correct:
         response ={
@@ -218,6 +224,11 @@ def registrar_nodo_actualiza_blockchain():
     read_json = request.get_json()
     nodes_addreses = read_json.get("nodos_direcciones")
     # [...] Codigo a desarrollar
+
+    
+
+
+
 
 
     response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})

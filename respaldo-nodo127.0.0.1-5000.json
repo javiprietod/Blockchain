@@ -3,12 +3,12 @@
   {
    "indice": 1,
    "transacciones": [],
-   "timestamp": 1668156746.806646,
+   "timestamp": 1668496603.930728,
    "hash_previo": "0",
    "prueba": 0,
-   "hash": "020623b7d665a18342e70f7c8053fee4d4f7dda05a9093b57fae63773fe93db2"
+   "hash": "67afe8a2d3dffd942e5a57d5f9b77370409d222844fb444b2670240b2d7676b7"
   }
  ],
  "longitud": 1,
- "date": "2022-11-11"
+ "date": "2022-11-15"
 }
