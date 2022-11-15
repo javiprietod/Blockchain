@@ -238,10 +238,12 @@ def registrar_nodo_actualiza_blockchain():
     data = read_json.get("blockchain")
     data = data['chain']
     blockchain_leida = Blockchain.Blockchain()
-    blockchain_leida.anterior = data[0]
-    for i in range(1,len(data)):
+    for i in range(len(data)):
         bloque_nuevo = Blockchain.Bloque(data[i]['indice'],data[i]['transacciones'],data[i]['timestamp'],data[i]['hash_previo'],data[i]['prueba'])
         bloque_nuevo.timestamp = data[i]['timestamp']
+        if i == 0:
+            blockchain_leida.anterior = bloque_nuevo
+
         valido = blockchain_leida.integra_bloque(bloque_nuevo,data[i]['hash'])
         if not valido:
             blockchain_leida = None
