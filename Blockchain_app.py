@@ -225,13 +225,6 @@ def registrar_nodo_actualiza_blockchain():
     nodes_addreses = read_json.get("nodos_direcciones")
     # [...] Codigo a desarrollar
 
-    
-
-
-
-
-
-    response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
 
 
     #[...] fin del codigo a desarrollar
