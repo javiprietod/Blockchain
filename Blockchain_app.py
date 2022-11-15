@@ -209,9 +209,6 @@ def registrar_nodos_completo():
         data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': {'chain': [b.toDict() for b in blockchain.cadena if b.hash is not None]}}
         response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
         if response.status_code == 400:
-        data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': requests.get(mi_nodo[0]+"/chain")}
-        response = requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
-        if response.status_code == 400:
             all_correct = False
 
          
@@ -229,6 +226,7 @@ def registrar_nodos_completo():
     
     return jsonify(response), 201  
 
+
 @app.route('/nodos/registro_simple', methods=['POST'])
 def registrar_nodo_actualiza_blockchain():
     # Obtenemos la variable global de blockchain
@@ -245,7 +243,6 @@ def registrar_nodo_actualiza_blockchain():
     data = read_json.get("blockchain")
     data = data['chain']
     blockchain_leida = Blockchain.Blockchain()
-    for i in range(len(data)):
     for i in range(len(data)):
         bloque_nuevo = Blockchain.Bloque(data[i]['indice'],data[i]['transacciones'],data[i]['timestamp'],data[i]['hash_previo'],data[i]['prueba'])
         
