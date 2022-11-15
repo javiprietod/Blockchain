@@ -3,12 +3,33 @@
   {
    "indice": 1,
    "transacciones": [],
-   "timestamp": 1668516821.4934242,
+   "timestamp": 1668533096.1077409,
    "hash_previo": "0",
    "prueba": 0,
-   "hash": "2d53b8e98087305937a34beaa0cf3792ef14d503fb8ae3c29507baaba49b4423"
+   "hash": "84caf160d4eef9f10e2065018fefa85bd37cdf730692df73691dd25a1d297d11"
+  },
+  {
+   "indice": 2,
+   "transacciones": [
+    {
+     "origen": "nodoA",
+     "destino": "nodoB",
+     "cantidad": 12,
+     "tiempo": 1668533109.5718446
+    },
+    {
+     "origen": "0",
+     "destino": "127.0.0.1",
+     "cantidad": 1,
+     "tiempo": 1668533111.7156365
+    }
+   ],
+   "timestamp": 1668533111.7156365,
+   "hash_previo": "84caf160d4eef9f10e2065018fefa85bd37cdf730692df73691dd25a1d297d11",
+   "prueba": 59312,
+   "hash": "0000951ebe1f88f588fd0520206d41d594c438ff8eef94d6f8b4a049dcfda6d8"
   }
  ],
- "longitud": 1,
+ "longitud": 2,
  "date": "2022-11-15"
 }

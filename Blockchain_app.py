@@ -127,16 +127,19 @@ def minar():
     '''
     # Si no hay transacciones no se puede minar un nuevo bloque
     if len(blockchain.transacciones) == 0:
-
         response = {
             'mensaje': "No es posible crear un nuevo bloque. No hay transacciones"
         }
     
-    # En caso de que sí haya transacciones, se mina el bloque
+    
+    elif not resuelve_conflictos():
+        response = {'mensaje': "Ha habido un conflicto. Esta cadena se ha actualizado con una version mas larga"}
+        
     else:
+
+        # En caso de que sí haya transacciones, se mina el bloque
         # Hay transaccion, por lo tanto ademas de minear el bloque, recibimos
         # recompensa
-
         # Guardamos el hash del bloque anterior de la cadena
         previous_hash = blockchain.anterior.hash
 
@@ -262,7 +265,19 @@ def registrar_nodo_actualiza_blockchain():
         blockchain = blockchain_leida
     return "La blockchain del nodo" +str(mi_ip) +":" +str(puerto) +"ha sido correctamente actualizada", 200
 
+def resuelve_conflictos():
+    global blockchain
+    global nodos_red
+    longitud_actual = len(blockchain.cadena)
+    # [Codigo a completar]
 
+    for nodo in nodos_red:
+        response = requests.get(str(nodo) +'/chain')
+        if response['longitud']>longitud_actual:
+            return False
+
+    return True
+    
 if __name__ == '__main__':
     '''
     Main principal del programa
