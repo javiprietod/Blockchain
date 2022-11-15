@@ -53,7 +53,7 @@ def copia_seguridad(puerto):
             # Dormimos el tiempo estipulado entre copias de seguridad
             file.close()
             mutex.release()
-            time.sleep(5)
+            time.sleep(60)
             
 def actualizar_blockchain(data):
     blockchain_leida = Blockchain.Blockchain()
@@ -227,7 +227,7 @@ def registrar_nodos_completo():
         nodos_nuevos.remove(mi_nodo)
 
     for nodo in nodos_nuevos:
-        nodos_red.append(nodo) 
+        nodos_red.append(nodo) if nodo not in nodos_red else None
     
     for nodo in nodos_red:
         temp = nodos_red.copy()
