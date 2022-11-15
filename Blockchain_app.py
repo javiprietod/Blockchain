@@ -272,8 +272,8 @@ def resuelve_conflictos():
     # [Codigo a completar]
 
     for nodo in nodos_red:
-        response = requests.get(str(nodo) +'/chain')
-        if response['longitud']>longitud_actual:
+        response = requests.get(str(nodo) +'/chain').json()
+        if response.get('longitud') > longitud_actual:
             return False
 
     return True

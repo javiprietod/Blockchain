@@ -1,0 +1,14 @@
+{
+ "chain": [
+  {
+   "indice": 1,
+   "transacciones": [],
+   "timestamp": 1668532852.935206,
+   "hash_previo": "0",
+   "prueba": 0,
+   "hash": "5b5aa69b4309f47f0fc4f2f140b71a02c6fcd661271743629e9f926ba3a7adf3"
+  }
+ ],
+ "longitud": 1,
+ "date": "2022-11-15"
+}
