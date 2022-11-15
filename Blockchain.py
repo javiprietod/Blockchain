@@ -94,7 +94,7 @@ class Blockchain(object):
         hash_prueba = bloque.calcular_hash()
         # Vuelve a calcularlo, incrementando en uno el valor de prueba hasta 
         # que sea válido
-        while not self.dificultad_adecuada(hash_prueba):
+        while hash_prueba[0:self.dificultad] != "0"*self.dificultad:
             bloque.prueba += 1
             hash_prueba = bloque.calcular_hash()
 
@@ -106,7 +106,7 @@ class Blockchain(object):
         Función que comprueba si un hash comienza por tantos
         ceros como indique la dificultad
         '''
-        return hash_prueba[0:self.dificultad] == "0"*self.dificultad
+        return 
 
     def prueba_valida(self, bloque: Bloque, hash_bloque: str) -> bool:
         '''

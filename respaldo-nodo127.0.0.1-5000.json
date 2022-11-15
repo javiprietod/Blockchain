@@ -1,0 +1,56 @@
+{
+ "chain": [
+  {
+   "indice": 1,
+   "transacciones": [],
+   "timestamp": 1668538785.101826,
+   "hash_previo": "0",
+   "prueba": 0,
+   "hash": "96eb9f5b57ae4644eae1f1f2b1d632a443f5bad6a17b2c2f594b7535a5de2c3a"
+  },
+  {
+   "indice": 2,
+   "transacciones": [
+    {
+     "origen": "nodoA",
+     "destino": "nodoB",
+     "cantidad": 10,
+     "tiempo": 1668538825.075584
+    },
+    {
+     "origen": "0",
+     "destino": "127.0.0.1",
+     "cantidad": 1,
+     "tiempo": 1668538825.080611
+    }
+   ],
+   "timestamp": 1668538825.080629,
+   "hash_previo": "96eb9f5b57ae4644eae1f1f2b1d632a443f5bad6a17b2c2f594b7535a5de2c3a",
+   "prueba": 21448,
+   "hash": "0000d1d40ca734e679385669483e9cded8e1047e7a2441d98228a2d5cab0c810"
+  },
+  {
+   "indice": 3,
+   "transacciones": [
+    {
+     "origen": "nodoA",
+     "destino": "nodoB",
+     "cantidad": 10,
+     "tiempo": 1668538825.349932
+    },
+    {
+     "origen": "0",
+     "destino": "127.0.0.1",
+     "cantidad": 1,
+     "tiempo": 1668538825.358655
+    }
+   ],
+   "timestamp": 1668538825.3586571,
+   "hash_previo": "0000d1d40ca734e679385669483e9cded8e1047e7a2441d98228a2d5cab0c810",
+   "prueba": 10458,
+   "hash": "000018e0ff5fdb29f80ada688d41f296118cd87bd6a20a0772f137c66d4fa889"
+  }
+ ],
+ "longitud": 3,
+ "date": "2022-11-15"
+}
