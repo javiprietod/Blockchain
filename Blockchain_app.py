@@ -27,7 +27,7 @@ mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
 
 
 
-def copia_seguridad(puerto):
+def copia_seguridad(puerto: int):
     '''
     Función que realiza una copia de seguridad del nodo actual
     y la guarda en un fichero que contiene el id del nodo,
@@ -55,7 +55,8 @@ def copia_seguridad(puerto):
             mutex.release()
             time.sleep(60)
             
-def actualizar_blockchain(data):
+def actualizar_blockchain(data: list):
+    # actualiza blockchain con la cadena recibida en lista
     blockchain_leida = Blockchain.Blockchain()
     primero = Blockchain.Bloque(data[0]['indice'],data[0]['transacciones'],data[0]['timestamp'],data[0]['hash_previo'],data[0]['prueba'])
     primero.timestamp = data[0]['timestamp']
@@ -149,15 +150,17 @@ def minar():
     
     
     elif not resuelve_conflictos():
+        # Si hay un conflicto, no se puede minar un nuevo bloque
         response = {'mensaje': "Ha habido un conflicto. Esta cadena se ha actualizado con una version mas larga"}
         longitud_actual = len(blockchain.cadena)
+        # Buscamos la cadena mas larga
         for nodo in nodos_red:
-            response2 = requests.get(str(nodo) +'/chain').json()
-            if response2.get('longitud') > longitud_actual:
+            cadena_nodo = requests.get(str(nodo) +'/chain').json()
+            if cadena_nodo.get('longitud') > longitud_actual:
                 nodo_mayor = nodo
-                
-        response3 = requests.get(str(nodo_mayor) +'/chain').json()
-        data = response3.get('chain')
+
+        # Actualizamos la cadena del nodo a la cadena mas larga
+        data = requests.get(str(nodo_mayor) +'/chain').json().get('chain')
         blockchain = actualizar_blockchain(data)
     else:
         # En caso de que sí haya transacciones, se mina el bloque
