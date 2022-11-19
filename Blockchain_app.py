@@ -20,7 +20,10 @@ app = Flask(__name__)
 
 # Instanciacion de la aplicacion
 blockchain = Blockchain.Blockchain()
+
+# Lista con los nodos que hay en la red
 nodos_red = []
+
 # Para saber mi ip
 mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
 
@@ -46,12 +49,21 @@ def copia_seguridad(puerto: int):
             }
         # Abrimos el fichero y escribimos 
         with open(copia, 'w') as file:
+
+            # Para evitar que se modifique la cadena mientras
+            # se hace la copia de seguridad
             mutex.acquire()
+
             # Escribimos lo necesario
             json.dump(response, file, default=str, indent=1)
-            # Dormimos el tiempo estipulado entre copias de seguridad
+
+            # Cerramos el fichero para cargar bien los datos
             file.close()
+
+            # Ya se puede modificar la cadena
             mutex.release()
+
+            # Dormimos el tiempo estipulado entre copias de seguridad
             time.sleep(60)
             
 def actualizar_blockchain(data: list):
@@ -134,9 +146,6 @@ def nueva_transaccion():
     return jsonify(response), 201
 
 
-
-
-
 @app.route('/chain', methods=['GET'])
 def blockchain_completa():
     '''
@@ -166,11 +175,17 @@ def minar():
     
     
     elif not resuelve_conflictos():
-        # Si hay un conflicto, no se puede minar un nuevo bloque
+        # Si hay un conflicto, no se puede minar un nuevo bloque,
+        # si no que se sustituye la cadena por la cadena del nodo
+        # que tenga la cadena más larga
         response = {'mensaje': "Ha habido un conflicto. Esta cadena se ha actualizado con una version mas larga"}
+
+        # Longitud de la cadena actual
         longitud_actual = len(blockchain.cadena)
+
         # Buscamos la cadena mas larga
         for nodo in nodos_red:
+            # Buscamos la longitud con 'chain'
             cadena_nodo = requests.get(str(nodo) +'/chain').json()
             if cadena_nodo.get('longitud') > longitud_actual:
                 nodo_mayor = nodo
@@ -178,6 +193,7 @@ def minar():
         # Actualizamos la cadena del nodo a la cadena mas larga
         data = requests.get(str(nodo_mayor) +'/chain').json().get('chain')
         blockchain = actualizar_blockchain(data)
+
     else:
         # En caso de que sí haya transacciones, se mina el bloque
         # Hay transaccion, por lo tanto ademas de minear el bloque, recibimos
@@ -231,13 +247,22 @@ def minar():
 
 @app.route('/nodos/registrar', methods=['POST'])
 def registrar_nodos_completo():
+    '''
+    Función que registra varios nodos en la red
+    '''
     values = request.get_json()
     global blockchain
     global nodos_red
-    nodos_nuevos =values.get('direccion_nodos')
+
+    # Nodos nuevos a añadir a la red
+    nodos_nuevos = values.get('direccion_nodos')
+
+    # Si no hay nodo a añadir, no se añaden
     if nodos_nuevos is None:
         return "Error: No se ha proporcionado una lista de nodos", 400
-    all_correct =True
+    
+    # Variable para verificar que todo funciona según lo previsto
+    all_correct = True
 
     # Almacenamos nuestra ip en una lista para luego poder sumarla a la lista de nodos
     mi_nodo = [f'http://{mi_ip}:{puerto}']
@@ -251,30 +276,44 @@ def registrar_nodos_completo():
     
     # Introducimos los nodos nuevos en nuestra red de blockchain
     for nodo in nodos_red:
+
+        # Lista de nodos a añadir en cada nodo, es la lista de todos menos a sí mismo
         temp = nodos_red.copy()
         temp.remove(nodo)
+
+        # Datos que tiene que tener ese nodo
         data = {'nodos_direcciones': temp + mi_nodo, 'blockchain': {'chain': [b.toDict() for b in blockchain.cadena if b.hash is not None]}}
-        response =requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
+
+        # Tratamos de registrar un nodo concreto
+        response = requests.post(nodo+"/nodos/registro_simple", data=json.dumps(data), headers ={'Content-Type':"application/json"})
+
+        # Si ha dado un error, all_correct pasa a ser False
         if response.status_code == 400:
             all_correct = False
 
-         
-        
+    # Si todo ha ido correctamente, se devuelve el mensaje de confirmación
     if all_correct:
         response ={
         'mensaje': 'Se han incluido nuevos nodos en la red',
         'nodos_totales': list(nodos_red)
         }
+    
+    # En caso de que haya habido algún error, se devuelve el mensaje correspondiente
     else:
         response ={
         'mensaje': 'Error notificando el nodo estipulado',
         }
     
+    # Devolvemos la respuesta que se haya generado
     return jsonify(response), 201  
 
 
 @app.route('/nodos/registro_simple', methods=['POST'])
 def registrar_nodo_actualiza_blockchain():
+    '''
+    Función que registra un nodo y actualiza el blockchain
+    de dicho nodo
+    '''
     # Obtenemos la variable global de blockchain
     global blockchain
     read_json = request.get_json()
@@ -289,22 +328,37 @@ def registrar_nodo_actualiza_blockchain():
     data = read_json.get("blockchain")
     data = data['chain']
     blockchain_leida = actualizar_blockchain(data)
+
+    # Si ha dado un error, es porque se ha corrompido la cadena
     if blockchain_leida == 1:
         return "El blockchain de la red esta currupto", 400
     else:
+        # En caso de que todo funcione correctamente
         # Actualizamos la blockchain
         blockchain = blockchain_leida
+    
+    # Si todo ha funcionado según lo esperado, devuelve un mensaje de confirmación
     return "La blockchain del nodo" +str(mi_ip) +":" +str(puerto) +"ha sido correctamente actualizada", 200
 
 def resuelve_conflictos():
+    '''
+    Función que comprueba si se pueden minar o no los bloques,
+    es decir, si hay algún nodo que tenga una cadena más larga
+    que la cadena del nodo que está intentando minar un bloque
+    '''
     global blockchain
     global nodos_red
+
+    # Longitud del nodo actual
     longitud_actual = len(blockchain.cadena)
 
    # Comprobamos si la cadena de alguno de los nodos es más larga que la nuestra
    # Si es así, devolvemos False para más tarde actualizamos la nuestra  
     for nodo in nodos_red:
+        # Calculamos la longitud del resto de cadenas
         response = requests.get(str(nodo) +'/chain').json()
+
+        # Comprobamos si es mayor a la actual
         if response.get('longitud') > longitud_actual:
             return False
 
@@ -314,11 +368,14 @@ if __name__ == '__main__':
     '''
     Main del programa
     '''
+
+    # Inicio del programa
     parser = ArgumentParser()
     puerto = input()
     parser.add_argument('-p', '--puerto', default=puerto, type=int, help='puerto para escuchar')
     args = parser.parse_args()
     puerto = args.puerto
+
     # Creación del hilo que realiza la copia de seguridad cada 60 segundos
     copia_de_seguridad = Thread(target=copia_seguridad, args=(puerto,))
     
