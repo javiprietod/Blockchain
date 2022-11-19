@@ -55,20 +55,37 @@ def copia_seguridad(puerto: int):
             time.sleep(60)
             
 def actualizar_blockchain(data: list):
-    # actualiza blockchain con la cadena recibida en lista
+    '''
+    Función que actualiza blockchain con la cadena recibida en lista
+    '''
+
+    # Objeto Blockchain que empieza vacío en el que aparecerán los datos
+    # leidos en data 
     blockchain_leida = Blockchain.Blockchain()
+
+    # Creamos el primer bloque
     primero = Blockchain.Bloque(data[0]['indice'],data[0]['transacciones'],data[0]['timestamp'],data[0]['hash_previo'],data[0]['prueba'])
     primero.timestamp = data[0]['timestamp']
     primero.hash = data[0]['hash']
+
+    # Establecemos en la cadena y como el anterior
+    # el primer bloque para evitar errores
     blockchain_leida.cadena = [primero]
     blockchain_leida.anterior = primero
+
+    # Añadimos el resto de los bloques de forma normal
     for i in range(1,len(data)):
         bloque_nuevo = Blockchain.Bloque(data[i]['indice'],data[i]['transacciones'],data[i]['timestamp'],data[i]['hash_previo'],data[i]['prueba'])
-        
+
+        # Vemos si se puede integrar
         valido = blockchain_leida.integra_bloque(bloque_nuevo,data[i]['hash'])
+
+        # Si no, es que la cadena está corrupta y devuelve una blockhain vacía (None)
         if not valido:
             blockchain_leida = None
             break
+    
+    # Devuelve la blockchain que hemos creado
     return blockchain_leida
 
 @app.route('/system', methods=['GET'])
