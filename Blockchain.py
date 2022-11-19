@@ -22,7 +22,7 @@ class Bloque:
 
     # Calcular el hash del bloque
     def calcular_hash(self) -> str:
-        block_string =json.dumps(self.__dict__, sort_keys=True)
+        block_string = json.dumps(self.__dict__, sort_keys=True)
         return hashlib.sha256(block_string.encode()).hexdigest()
     
     def toDict(bloque):
@@ -50,7 +50,7 @@ class Blockchain(object):
         y lo añade a la cadena de bloques. Este bloque
         comienza siendo el anterior
         '''
-        bloque = Bloque(1, [], time.time(), "0", 0)
+        bloque = Bloque(1, [], 0, "0", 0)
         hash_1 = bloque.calcular_hash()
         bloque.hash = hash_1
         self.cadena.append(bloque)
@@ -101,12 +101,12 @@ class Blockchain(object):
         # Hash válido calculado
         return hash_prueba
 
-    def dificultad_adecuada(self, hash_prueba):
-        '''
-        Función que comprueba si un hash comienza por tantos
-        ceros como indique la dificultad
-        '''
-        return 
+    # def dificultad_adecuada(self, hash_prueba):
+    #     '''
+    #     Función que comprueba si un hash comienza por tantos
+    #     ceros como indique la dificultad
+    #     '''
+    #     return 
 
     def prueba_valida(self, bloque: Bloque, hash_bloque: str) -> bool:
         '''
