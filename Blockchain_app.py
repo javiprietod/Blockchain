@@ -1,3 +1,6 @@
+# SOFÍA PEDRÓS TOBARUELA
+# JAVIER PRIETO DOMÍNGUEZ
+
 # Importamos las librerías necesarias
 import Blockchain
 import socket

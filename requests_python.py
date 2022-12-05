@@ -1,5 +1,9 @@
+# SOFÍA PEDRÓS TOBARUELA
+# JAVIER PRIETO DOMÍNGUEZ
+
 import requests
 import json
+
 
 # Cabecera JSON (comun a todas)
 cabecera = {'Content-type': 'application/json', 'Accept': 'text/plain'}
