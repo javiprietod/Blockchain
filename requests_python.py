@@ -22,8 +22,9 @@ r = requests.get('http://127.0.0.1:5000/chain')
 print(r.text)
 
 # REGISTRAR NUEVOS NODOS A LA RED
+ip_5001 = '127.0.0.1'
 nodos_a_registrar = {
-					"direccion_nodos": ['http://127.0.0.1:5001', 'http://127.0.0.1:5002']
+					"direccion_nodos": [f'http://{ip_5001}:5001', 'http://127.0.0.1:5002']
 }
 
 
@@ -42,26 +43,26 @@ print(r.text)
 
 # AÑADIR UNA TRANSACCIÓN EN EL NODO 5001
 transaccion_nueva = {'origen': 'nodoA', 'destino': 'nodoB', 'cantidad': 10}
-r = requests.post('http://127.0.0.1:5001/transacciones/nueva', data=json.dumps(
+r = requests.post(f'http://{ip_5001}:5001/transacciones/nueva', data=json.dumps(
                    transaccion_nueva), headers=cabecera)
 print(r.text)
 
 # IMPRIMR LA CADENA DEL NODO 5001
-r = requests.get('http://127.0.0.1:5001/chain')
+r = requests.get(f'http://{ip_5001}:5001/chain')
 print(r.text)
 
 # TRATAMOS DE MINAR UN BLOQUE EN EL NODO 5001
 # PARA VER QUE HAY CONFLICTOS
-r = requests.get('http://127.0.0.1:5001/minar')
+r = requests.get(f'http://{ip_5001}:5001/minar')
 print(r.text)
 
 # MOSTRAR LA CADENA DEL NODO 5001 PARA VER
 # QUE NO SE HA MINADO UN BLOQUE, SINO QUE
 # AHORA TIENE LA CADENA DEL NODO 5000 (LA MÁS
 # LARGA DE LA RED)
-r = requests.get('http://127.0.0.1:5001/chain')
+r = requests.get(f'http://{ip_5001}:5001/chain')
 print(r.text)
 
 # MOTRAR LOS DATOS DEL SISTEMA
-r = requests.get('http://127.0.0.1:5001/system')
+r = requests.get(f'http://{ip_5001}:5001/system')
 print(r.text)
