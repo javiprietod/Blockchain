@@ -383,7 +383,7 @@ if __name__ == '__main__':
 
     # Inicio del programa
     parser = ArgumentParser()
-    puerto = input()
+    puerto = input("Introduzca el puerto: ",)
     parser.add_argument('-p', '--puerto', default=puerto, type=int, help='puerto para escuchar')
     args = parser.parse_args()
     puerto = args.puerto
