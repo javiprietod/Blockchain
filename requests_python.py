@@ -26,6 +26,7 @@ nodos_a_registrar = {
 					"direccion_nodos": ['http://127.0.0.1:5001', 'http://127.0.0.1:5002']
 }
 
+
 r = requests.post('http://127.0.0.1:5000/nodos/registrar', data=json.dumps(nodos_a_registrar), headers=cabecera)
 print(r.text)
 

@@ -21,11 +21,11 @@ app = Flask(__name__)
 blockchain = Blockchain.Blockchain()
 
 # Lista con los nodos que hay en la red
-nodos_red = ['']
+nodos_red = []
 
 # Para saber mi ip
 # mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
-mi_ip = '192.168.56.1'
+mi_ip = '192.168.1.137'
 
 
 def copia_seguridad(puerto: int):
