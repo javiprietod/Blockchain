@@ -1,3 +1,7 @@
+# SOFÍA PEDRÓS TOBARUELA
+# JAVIER PRIETO DOMÍNGUEZ
+
+
 # Importamos las librerías necesarias
 import json
 import hashlib

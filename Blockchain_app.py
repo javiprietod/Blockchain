@@ -1,3 +1,6 @@
+# SOFÍA PEDRÓS TOBARUELA
+# JAVIER PRIETO DOMÍNGUEZ
+
 # Importamos las librerías necesarias
 import Blockchain
 import socket
@@ -24,7 +27,8 @@ blockchain = Blockchain.Blockchain()
 nodos_red = []
 
 # Para saber mi ip
-mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
+# mi_ip = socket.gethostbyname(socket.gethostbyname('localhost'))
+mi_ip = '192.168.1.137'
 
 
 def copia_seguridad(puerto: int):
@@ -382,7 +386,7 @@ if __name__ == '__main__':
 
     # Inicio del programa
     parser = ArgumentParser()
-    puerto = input()
+    puerto = input("Introduzca el puerto: ",)
     parser.add_argument('-p', '--puerto', default=puerto, type=int, help='puerto para escuchar')
     args = parser.parse_args()
     puerto = args.puerto
